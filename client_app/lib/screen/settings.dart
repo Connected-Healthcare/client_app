@@ -1,3 +1,4 @@
+import 'package:client_app/bt/screen/select.dart';
 import 'package:flutter/material.dart';
 
 class SettingScreen extends StatelessWidget {
@@ -26,7 +27,6 @@ NOTE: This only needs to be done once and/or anytime you want to change your BT 
 
   @override
   Widget build(BuildContext context) {
-    print("rebuilding");
     return ListView(
       children: [
         Card(
@@ -35,6 +35,9 @@ NOTE: This only needs to be done once and/or anytime you want to change your BT 
             subtitle: Text(INFORMATION),
           ),
         ),
+        Card(
+          child: BtSelectTile(),
+        )
       ],
     );
   }
