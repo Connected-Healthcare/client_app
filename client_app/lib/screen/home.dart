@@ -7,7 +7,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final List<Widget> _screens = [
+    BluetoothRealtimeScreen(),
+    Container(),
+  ];
+  int _index = 0;
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -16,6 +27,7 @@ class HomeScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text("HomePage"),
           bottom: TabBar(
+            onTap: (int index) => _updateScreenIndex(index),
             tabs: [
               Tab(icon: Icon(Icons.bluetooth)),
               Tab(icon: Icon(Icons.bar_chart)),
@@ -38,14 +50,17 @@ class HomeScreen extends StatelessWidget {
             ),
           ],
         ),
-        body: TabBarView(
-          children: [
-            BluetoothRealtimeScreen(),
-            Container(),
-          ],
+        body: IndexedStack(
+          index: _index,
+          children: _screens,
         ),
       ),
     );
+  }
+
+  void _updateScreenIndex(int index) {
+    _index = index;
+    setState(() {});
   }
 
   Future<void> onPressedBluetoothConnect(BuildContext context) async {
@@ -64,7 +79,7 @@ class HomeScreen extends StatelessWidget {
 
     // Check if settings are there
     if (sharedPrefsModel.bluetoothAddress == "") {
-      Scaffold.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
           content: Text("Please register Bluetooth on the Settings screen"),
@@ -81,6 +96,7 @@ class HomeScreen extends StatelessWidget {
     }
 
     // Connect bluetooth device
+    // TODO, Can throw PlatformException, Handle this
     BluetoothConnection connection =
         await BluetoothUtils.connectBluetoothDevice(context,
             sharedPrefsModel.bluetoothName, sharedPrefsModel.bluetoothAddress);
@@ -89,7 +105,7 @@ class HomeScreen extends StatelessWidget {
         BluetoothUtils.inputStreamBluetoothConnection(connection);
 
     bluetoothModel.connection = connection;
-    bluetoothModel.stream = stream.asBroadcastStream();
+    bluetoothModel.stream = stream;
   }
 
   void onPressedSettings(BuildContext context) {

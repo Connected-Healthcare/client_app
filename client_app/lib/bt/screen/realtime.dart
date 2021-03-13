@@ -50,7 +50,6 @@ class _BluetoothRealtimeScreenState extends State<BluetoothRealtimeScreen> {
     return StreamBuilder<String>(
       stream: bluetoothModel.stream,
       builder: (context, snapshot) {
-        // _addInformation(snapshot.data);
         bluetoothModel.addInformation(snapshot.data);
         return ListView.builder(
           itemCount: bluetoothModel.informations.length,
