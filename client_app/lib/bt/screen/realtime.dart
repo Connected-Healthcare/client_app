@@ -10,9 +10,6 @@ class BluetoothRealtimeScreen extends StatefulWidget {
 }
 
 class _BluetoothRealtimeScreenState extends State<BluetoothRealtimeScreen> {
-  static const int MAXSIZE = 20;
-  List<String> _informations = [];
-
   @override
   Widget build(BuildContext context) {
     return Consumer<BluetoothModel>(
@@ -48,38 +45,22 @@ class _BluetoothRealtimeScreenState extends State<BluetoothRealtimeScreen> {
   }
 
   Widget _onBluetoothConnected() {
+    BluetoothModel bluetoothModel =
+        Provider.of<BluetoothModel>(context, listen: false);
     return StreamBuilder<String>(
-      stream: Provider.of<BluetoothModel>(context).stream,
+      stream: bluetoothModel.stream,
       builder: (context, snapshot) {
-        _addInformation(snapshot.data);
+        // _addInformation(snapshot.data);
+        bluetoothModel.addInformation(snapshot.data);
         return ListView.builder(
-          itemCount: _informations.length,
+          itemCount: bluetoothModel.informations.length,
           itemBuilder: (context, index) {
             return BluetoothInformationSchemaCard(
-                _informations[index].trim().split(","));
+                bluetoothModel.informations[index].trim().split(","));
           },
         );
       },
     );
-  }
-
-  void _addInformation(String line) {
-    // Make sure no null value is received
-    if (line == null) {
-      return;
-    }
-
-    // Sanitize for tokens
-    List<String> chunks = line.trim().split(",");
-    if (chunks.length != 14) {
-      return;
-    }
-
-    // Write to _informations
-    if (_informations.length > MAXSIZE) {
-      _informations.removeLast();
-    }
-    _informations.insert(0, line);
   }
 }
 

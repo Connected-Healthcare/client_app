@@ -10,27 +10,41 @@ import 'package:provider/provider.dart';
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("HomePage"),
-        actions: [
-          Consumer<BluetoothModel>(
-            builder: (context, bluetoothModel, _) {
-              return IconButton(
-                icon: bluetoothModel.connection?.isConnected == true
-                    ? Icon(Icons.bluetooth_connected)
-                    : Icon(Icons.bluetooth),
-                onPressed: () => onPressedBluetoothConnect(context),
-              );
-            },
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("HomePage"),
+          bottom: TabBar(
+            tabs: [
+              Tab(icon: Icon(Icons.bluetooth)),
+              Tab(icon: Icon(Icons.bar_chart)),
+            ],
           ),
-          IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () => onPressedSettings(context),
-          ),
-        ],
+          actions: [
+            Consumer<BluetoothModel>(
+              builder: (context, bluetoothModel, _) {
+                return IconButton(
+                  icon: bluetoothModel.connection?.isConnected == true
+                      ? Icon(Icons.bluetooth_connected)
+                      : Icon(Icons.bluetooth),
+                  onPressed: () => onPressedBluetoothConnect(context),
+                );
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () => onPressedSettings(context),
+            ),
+          ],
+        ),
+        body: TabBarView(
+          children: [
+            BluetoothRealtimeScreen(),
+            Container(),
+          ],
+        ),
       ),
-      body: BluetoothRealtimeScreen(),
     );
   }
 
@@ -75,7 +89,7 @@ class HomeScreen extends StatelessWidget {
         BluetoothUtils.inputStreamBluetoothConnection(connection);
 
     bluetoothModel.connection = connection;
-    bluetoothModel.stream = stream;
+    bluetoothModel.stream = stream.asBroadcastStream();
   }
 
   void onPressedSettings(BuildContext context) {
