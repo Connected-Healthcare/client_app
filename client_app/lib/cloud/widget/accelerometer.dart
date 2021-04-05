@@ -3,21 +3,20 @@ import 'package:client_app/cloud/widget/custom_line_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-class HeartbeatGraph extends StatelessWidget {
+class AccelerometerGraph extends StatelessWidget {
   final int currentMaxEpochTime;
   final List<CloudSchema> cloudData;
-  HeartbeatGraph(this.cloudData, this.currentMaxEpochTime);
+  AccelerometerGraph(this.cloudData, this.currentMaxEpochTime);
 
-  // TODO, Take magic numbers and make them static const
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(20.0),
-      height: 200.0,
+      height: 400.0,
       child: CustomLineChart(
-        _heartbeatBarData(),
-        minY: 30,
-        maxY: 120,
+        _accelerometerBarData(),
+        minY: -1000,
+        maxY: 1000,
         maxX: currentMaxEpochTime.toDouble(),
         bottomTitleCallback: (value) {
           if (value.toInt() % 15 == 0) {
@@ -27,7 +26,7 @@ class HeartbeatGraph extends StatelessWidget {
           return '';
         },
         leftTitleCallback: (value) {
-          if (value.toInt() % 2 == 0) {
+          if (value.toInt() % 100 == 0) {
             return value.toInt().toString();
           }
           return '';
@@ -36,9 +35,37 @@ class HeartbeatGraph extends StatelessWidget {
     );
   }
 
-  List<LineChartBarData> _heartbeatBarData() {
-    final LineChartBarData lineChartBarData1 = LineChartBarData(
-      spots: _heartbeatTimestampSpots(),
+  List<LineChartBarData> _accelerometerBarData() {
+    final LineChartBarData accelerometerXAxisBarData = LineChartBarData(
+      spots: _accelerometerTimestampSpots(0),
+      isCurved: true,
+      colors: [Colors.redAccent],
+      barWidth: 3,
+      isStrokeCapRound: true,
+      dotData: FlDotData(
+        show: true,
+      ),
+      belowBarData: BarAreaData(
+        show: false,
+      ),
+    );
+
+    final LineChartBarData accelerometerYAxisBarData = LineChartBarData(
+      spots: _accelerometerTimestampSpots(1),
+      isCurved: true,
+      colors: [Colors.blueAccent],
+      barWidth: 3,
+      isStrokeCapRound: true,
+      dotData: FlDotData(
+        show: true,
+      ),
+      belowBarData: BarAreaData(
+        show: false,
+      ),
+    );
+
+    final LineChartBarData accelerometerZAxisBarData = LineChartBarData(
+      spots: _accelerometerTimestampSpots(2),
       isCurved: true,
       colors: [Colors.greenAccent],
       barWidth: 3,
@@ -50,20 +77,23 @@ class HeartbeatGraph extends StatelessWidget {
         show: false,
       ),
     );
+
     return [
-      lineChartBarData1,
+      accelerometerXAxisBarData,
+      accelerometerYAxisBarData,
+      accelerometerZAxisBarData,
     ];
   }
 
-  List<FlSpot> _heartbeatTimestampSpots() {
+  List<FlSpot> _accelerometerTimestampSpots(int index) {
     // If user starts sending data after a long time we do not want to get previous days data
     // Make sure all the data is within the last 30 seconds
     int minrequirement = currentMaxEpochTime - 30;
     List<FlSpot> flspots = List<FlSpot>.empty(growable: true);
     for (var cd in cloudData) {
       if (cd.epochTime >= minrequirement) {
-        flspots
-            .add(FlSpot(cd.epochTime.toDouble(), cd.heartbeat[0].toDouble()));
+        flspots.add(FlSpot(
+            cd.epochTime.toDouble(), cd.accelerometer[index].toDouble()));
       }
     }
 

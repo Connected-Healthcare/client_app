@@ -3,21 +3,20 @@ import 'package:client_app/cloud/widget/custom_line_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-class HeartbeatGraph extends StatelessWidget {
+class OxygenGraph extends StatelessWidget {
   final int currentMaxEpochTime;
   final List<CloudSchema> cloudData;
-  HeartbeatGraph(this.cloudData, this.currentMaxEpochTime);
+  OxygenGraph(this.cloudData, this.currentMaxEpochTime);
 
-  // TODO, Take magic numbers and make them static const
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(20.0),
       height: 200.0,
       child: CustomLineChart(
-        _heartbeatBarData(),
-        minY: 30,
-        maxY: 120,
+        _oxygenBarData(),
+        minY: 10,
+        maxY: 100,
         maxX: currentMaxEpochTime.toDouble(),
         bottomTitleCallback: (value) {
           if (value.toInt() % 15 == 0) {
@@ -36,11 +35,11 @@ class HeartbeatGraph extends StatelessWidget {
     );
   }
 
-  List<LineChartBarData> _heartbeatBarData() {
+  List<LineChartBarData> _oxygenBarData() {
     final LineChartBarData lineChartBarData1 = LineChartBarData(
-      spots: _heartbeatTimestampSpots(),
+      spots: _oxygenTimestampSpots(),
       isCurved: true,
-      colors: [Colors.greenAccent],
+      colors: [Colors.blueAccent],
       barWidth: 3,
       isStrokeCapRound: true,
       dotData: FlDotData(
@@ -50,12 +49,13 @@ class HeartbeatGraph extends StatelessWidget {
         show: false,
       ),
     );
+
     return [
       lineChartBarData1,
     ];
   }
 
-  List<FlSpot> _heartbeatTimestampSpots() {
+  List<FlSpot> _oxygenTimestampSpots() {
     // If user starts sending data after a long time we do not want to get previous days data
     // Make sure all the data is within the last 30 seconds
     int minrequirement = currentMaxEpochTime - 30;
@@ -63,7 +63,7 @@ class HeartbeatGraph extends StatelessWidget {
     for (var cd in cloudData) {
       if (cd.epochTime >= minrequirement) {
         flspots
-            .add(FlSpot(cd.epochTime.toDouble(), cd.heartbeat[0].toDouble()));
+            .add(FlSpot(cd.epochTime.toDouble(), cd.heartbeat[1].toDouble()));
       }
     }
 
