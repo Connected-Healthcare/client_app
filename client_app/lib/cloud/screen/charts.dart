@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:client_app/cloud/state/schema.dart';
+import 'package:client_app/cloud/widget/custom_line_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -34,8 +35,24 @@ class _CloudChartScreenState extends State<CloudChartScreen> {
         Container(
           padding: EdgeInsets.all(20.0),
           height: 200.0,
-          child: LineChart(
-            heartbeatChartData(),
+          child: CustomLineChart(
+            heartbeatBarData(),
+            minY: 30,
+            maxY: 120,
+            maxX: _currentMaxEpochTime.toDouble(),
+            bottomTitleCallback: (value) {
+              if (value.toInt() % 15 == 0) {
+                return DateTime.fromMillisecondsSinceEpoch(value.toInt() * 1000)
+                    .toString();
+              }
+              return '';
+            },
+            leftTitleCallback: (value) {
+              if (value.toInt() % 2 == 0) {
+                return value.toString();
+              }
+              return '';
+            },
           ),
         ),
 
@@ -82,78 +99,7 @@ class _CloudChartScreenState extends State<CloudChartScreen> {
     super.dispose();
   }
 
-  LineChartData heartbeatChartData() {
-    return LineChartData(
-      lineTouchData: LineTouchData(
-        touchTooltipData: LineTouchTooltipData(
-          tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
-        ),
-        touchCallback: (LineTouchResponse touchResponse) {},
-        handleBuiltInTouches: true,
-      ),
-      gridData: FlGridData(
-        show: true,
-      ),
-      titlesData: FlTitlesData(
-        bottomTitles: SideTitles(
-          showTitles: true,
-          getTextStyles: (value) => const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
-          margin: 10,
-          getTitles: (value) {
-            if (value.toInt() % 15 == 0) {
-              return DateTime.fromMillisecondsSinceEpoch(value.toInt() * 1000)
-                  .toString();
-            }
-            return '';
-          },
-        ),
-        leftTitles: SideTitles(
-          showTitles: true,
-          getTextStyles: (value) => const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
-          getTitles: (value) {
-            if (value.toInt() % 2 == 0) {
-              return value.toString();
-            }
-            return '';
-          },
-          margin: 8,
-          reservedSize: 30,
-        ),
-      ),
-      borderData: FlBorderData(
-        show: true,
-        border: const Border(
-          bottom: BorderSide(
-            color: Colors.black,
-          ),
-          left: BorderSide(
-            color: Colors.black,
-          ),
-          right: BorderSide(
-            color: Colors.transparent,
-          ),
-          top: BorderSide(
-            color: Colors.transparent,
-          ),
-        ),
-      ),
-      // minX: _currentMaxEpochTime.toDouble() - 30,
-      minY: 30,
-      maxX: _currentMaxEpochTime.toDouble(),
-      maxY: 120,
-      lineBarsData: linesBarData1(),
-    );
-  }
-
-  List<LineChartBarData> linesBarData1() {
+  List<LineChartBarData> heartbeatBarData() {
     final LineChartBarData lineChartBarData1 = LineChartBarData(
       spots: heartbeatTimestampSpots(),
       isCurved: true,
