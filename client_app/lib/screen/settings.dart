@@ -1,4 +1,5 @@
 import 'package:client_app/bt/screen/select.dart';
+import 'package:client_app/screen/settings/user.dart';
 import 'package:flutter/material.dart';
 
 class SettingScreen extends StatelessWidget {
@@ -19,11 +20,15 @@ class SettingBody extends StatefulWidget {
 }
 
 class _SettingBodyState extends State<SettingBody> {
-  static const INFORMATION = """
+  static const BT_INFORMATION = """
 Go to your bluetooth settings and pair with the device of your choice.
 Restart the app and click on select bluetooth.
 You can now select the paired bluetooth device that you want to connect to.
 NOTE: This only needs to be done once and/or anytime you want to change your BT device.""";
+
+  static const USER_ID_INFORMATION = """
+If you update or add your username, restart the application for the firebase console to reconnect.
+""";
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +36,28 @@ NOTE: This only needs to be done once and/or anytime you want to change your BT 
       children: [
         Card(
           child: ListTile(
-            title: Text("Information"),
-            subtitle: Text(INFORMATION),
+            title: Text("Bluetooth Information"),
+            subtitle: Text(BT_INFORMATION),
           ),
         ),
         Card(
           child: BtSelectTile(),
-        )
+        ),
+
+        //
+        Card(
+          child: ListTile(
+            title: Text("User ID Information"),
+            subtitle: Text(USER_ID_INFORMATION),
+          ),
+        ),
+        // Show if User is saved here
+        UserSelectedTile(),
+
+        // Take user name here
+        UserSelectionTile(),
+
+        // END
       ],
     );
   }
