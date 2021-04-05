@@ -6,6 +6,7 @@ class SharedPrefsModel extends ChangeNotifier {
   SharedPrefsModel(this.prefs) {
     _writeInitialString(BLUETOOTH_ADDRESS_KEY, "");
     _writeInitialString(BLUETOOTH_NAME_KEY, "");
+    _writeInitialString(USER_IDENTIFIER_KEY, "");
   }
 
   void _writeInitialString(String key, String initialData) {
@@ -27,4 +28,13 @@ class SharedPrefsModel extends ChangeNotifier {
   String get bluetoothAddress => prefs.getString(BLUETOOTH_ADDRESS_KEY);
 
   String get bluetoothName => prefs.getString(BLUETOOTH_NAME_KEY);
+
+  // User
+  static const String USER_IDENTIFIER_KEY = "_userIdentifier";
+  Future<void> setUserIdentifier(String identifier) async {
+    await prefs.setString(USER_IDENTIFIER_KEY, identifier);
+    notifyListeners();
+  }
+
+  String get userIdentifier => prefs.getString(USER_IDENTIFIER_KEY);
 }
