@@ -1,9 +1,9 @@
 import 'package:client_app/bt/logic/utils.dart';
 import 'package:client_app/bt/screen/realtime.dart';
 import 'package:client_app/bt/state/bluetooth_model.dart';
-import 'package:client_app/bt/storage/shared_prefs_model.dart';
 import 'package:client_app/cloud/screen/charts.dart';
 import 'package:client_app/screen/settings.dart';
+import 'package:client_app/storage/shared_prefs_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:provider/provider.dart';
