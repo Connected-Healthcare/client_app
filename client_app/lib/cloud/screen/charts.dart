@@ -4,9 +4,12 @@ import 'package:client_app/cloud/state/schema.dart';
 import 'package:client_app/cloud/widget/accelerometer.dart';
 import 'package:client_app/cloud/widget/heartbeat.dart';
 import 'package:client_app/cloud/widget/oxygen.dart';
+import 'package:client_app/screen/settings/user.dart';
+import 'package:client_app/storage/shared_prefs_model.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:provider/provider.dart';
 
 class CloudChartScreen extends StatefulWidget {
   @override
@@ -14,8 +17,6 @@ class CloudChartScreen extends StatefulWidget {
 }
 
 class _CloudChartScreenState extends State<CloudChartScreen> {
-  // TODO, Get the User from the setting screen
-  static const String TestIdentifier = "RLOC5000";
   static const int MaxRead = 20;
 
   // States
@@ -25,9 +26,11 @@ class _CloudChartScreenState extends State<CloudChartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // return LineChart(sampleData1());
     return ListView(
       children: [
+        // Tell the user who he is
+        UserSelectedTile(),
+
         ListTile(
           leading: Icon(Icons.local_hospital),
           title: Text("Heartbeat Graph"),
@@ -54,11 +57,17 @@ class _CloudChartScreenState extends State<CloudChartScreen> {
   @override
   void initState() {
     super.initState();
+    final SharedPrefsModel sharedPrefsModel =
+        Provider.of<SharedPrefsModel>(context, listen: false);
+    if (sharedPrefsModel.userIdentifier == "") {
+      return;
+    }
+    // NOTE: Do not instantiate FirebaseDatabase if sharedPrefsModel.userIdentifier is not set
 
     // Stream for User
     _stream = FirebaseDatabase.instance
         .reference()
-        .child(TestIdentifier)
+        .child(sharedPrefsModel.userIdentifier)
         .limitToLast(MaxRead)
         .onValue
         .listen((event) {
