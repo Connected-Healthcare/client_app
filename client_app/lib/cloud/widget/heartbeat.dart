@@ -15,7 +15,7 @@ class HeartbeatGraph extends StatelessWidget {
       padding: EdgeInsets.all(20.0),
       height: 200.0,
       child: CustomLineChart(
-        heartbeatBarData(),
+        _heartbeatBarData(),
         minY: 30,
         maxY: 120,
         maxX: currentMaxEpochTime.toDouble(),
@@ -28,7 +28,7 @@ class HeartbeatGraph extends StatelessWidget {
         },
         leftTitleCallback: (value) {
           if (value.toInt() % 2 == 0) {
-            return value.toString();
+            return value.toInt().toString();
           }
           return '';
         },
@@ -36,9 +36,9 @@ class HeartbeatGraph extends StatelessWidget {
     );
   }
 
-  List<LineChartBarData> heartbeatBarData() {
+  List<LineChartBarData> _heartbeatBarData() {
     final LineChartBarData lineChartBarData1 = LineChartBarData(
-      spots: heartbeatTimestampSpots(),
+      spots: _heartbeatTimestampSpots(),
       isCurved: true,
       colors: [Colors.greenAccent],
       barWidth: 3,
@@ -55,7 +55,7 @@ class HeartbeatGraph extends StatelessWidget {
     ];
   }
 
-  List<FlSpot> heartbeatTimestampSpots() {
+  List<FlSpot> _heartbeatTimestampSpots() {
     // If user starts sending data after a long time we do not want to get previous days data
     // Make sure all the data is within the last 30 seconds
     int minrequirement = currentMaxEpochTime - 30;
