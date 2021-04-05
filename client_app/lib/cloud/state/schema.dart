@@ -24,7 +24,6 @@ class CloudSchema {
   // String lps22hbTemperature;
   // String lps22hbPressure;
   // List<String> magnetometer = List<String>.filled(3, "");
-  // List<String> accelerometer = List<String>.filled(3, "");
   // List<String> gyroscope = List<String>.filled(3, "");
   // String timeOfFlight;
   // String coGasConcentration;
@@ -33,6 +32,7 @@ class CloudSchema {
   // List<String> gps = List<String>.filled(2, "");
 
   List<int> heartbeat;
+  List<int> accelerometer;
   int epochTime;
 
   // TODO, Handle error cases
@@ -43,6 +43,10 @@ class CloudSchema {
 
     String rawEpoch = data[EpochTimeTag];
     epochTime = double.parse(rawEpoch).toInt();
+
+    String rawAccelerometer = data[AccelerometerTag];
+    accelerometer =
+        rawAccelerometer.trim().split(",").map((e) => int.parse(e)).toList();
 
     return true;
   }

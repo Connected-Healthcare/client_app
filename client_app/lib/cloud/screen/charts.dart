@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:client_app/cloud/state/schema.dart';
+import 'package:client_app/cloud/widget/accelerometer.dart';
 import 'package:client_app/cloud/widget/heartbeat.dart';
 import 'package:flutter/material.dart';
 
@@ -31,6 +32,12 @@ class _CloudChartScreenState extends State<CloudChartScreen> {
           title: Text("Heartbeat Graph"),
         ),
         HeartbeatGraph(this._cloudSchema, this._currentMaxEpochTime),
+
+        ListTile(
+          leading: Icon(Icons.local_hospital),
+          title: Text("Accelerometer Graph"),
+        ),
+        AccelerometerGraph(this._cloudSchema, this._currentMaxEpochTime),
 
         // END
       ],
