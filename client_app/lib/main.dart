@@ -1,6 +1,6 @@
 import 'package:client_app/bt/state/bluetooth_model.dart';
-import 'package:client_app/bt/storage/shared_prefs_model.dart';
 import 'package:client_app/screen/home.dart';
+import 'package:client_app/storage/shared_prefs_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
