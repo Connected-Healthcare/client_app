@@ -58,18 +58,12 @@ class BluetoothModel extends ChangeNotifier {
   static const int MAXSIZE = 20;
 
   BluetoothConnection connection;
-  Stream<String> _stream;
 
   List<BluetoothSensorSchema> _sensorInfo =
       List<BluetoothSensorSchema>.empty(growable: true);
 
   List<String> alerts = List<String>.empty(growable: true);
   List<String> debug = List<String>.empty(growable: true);
-
-  set stream(Stream<String> stream) {
-    _stream = stream;
-    notifyListeners();
-  }
 
   void addInformation(String line) {
     // Make sure no null value is received
@@ -81,7 +75,6 @@ class BluetoothModel extends ChangeNotifier {
     List<String> tokens = line.trim().split(",");
 
     String identifier = tokens[0];
-    print("Identifier: $identifier");
     if (identifier == "sensor") {
       if (tokens.length != 22) {
         return;
@@ -91,11 +84,22 @@ class BluetoothModel extends ChangeNotifier {
         _sensorInfo.removeLast();
       }
       _sensorInfo.insert(0, BluetoothSensorSchema(tokens));
+    } else if (identifier == "alert") {
+      if (alerts.length > MAXSIZE) {
+        alerts.removeLast();
+      }
+      alerts.insert(0, tokens[1]);
+    } else if (identifier == "debug") {
+      if (debug.length > MAXSIZE) {
+        debug.removeLast();
+      }
+      debug.insert(0, tokens[1]);
     } else {
       // Move on
     }
+
+    notifyListeners();
   }
 
-  Stream<String> get stream => _stream;
   List<BluetoothSensorSchema> get sensorInformation => _sensorInfo;
 }
