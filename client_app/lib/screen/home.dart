@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:client_app/bt/logic/utils.dart';
+import 'package:client_app/bt/screen/alert.dart';
+import 'package:client_app/bt/screen/debug.dart';
 import 'package:client_app/bt/screen/realtime.dart';
 import 'package:client_app/bt/state/bluetooth_model.dart';
 import 'package:client_app/cloud/screen/charts.dart';
@@ -19,11 +21,15 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _screens = [
     BluetoothRealtimeScreen(),
     CloudChartScreen(),
+    BluetoothAlertScreen(),
+    BluetoothDebugScreen(),
   ];
 
   final List<Widget> _tabs = [
     Tab(icon: Icon(Icons.bluetooth)),
     Tab(icon: Icon(Icons.bar_chart)),
+    Tab(icon: Icon(Icons.add_alert_outlined)),
+    Tab(icon: Icon(Icons.receipt_long)),
   ];
 
   int _index = 0;
