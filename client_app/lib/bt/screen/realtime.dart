@@ -12,49 +12,34 @@ class BluetoothRealtimeScreen extends StatefulWidget {
 class _BluetoothRealtimeScreenState extends State<BluetoothRealtimeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<BluetoothModel>(
-      builder: (context, model, _) {
-        if (model.connection?.isConnected == true) {
-          return _onBluetoothConnected();
-        } else {
-          return _onBluetoothConnecting();
-        }
-      },
-    );
-  }
-
-  Widget _onBluetoothConnecting() {
     SharedPrefsModel sharedPrefsModel =
         Provider.of<SharedPrefsModel>(context, listen: true);
-    return ListTile(
-      title: sharedPrefsModel.bluetoothName != ""
-          ? Text.rich(
-              TextSpan(
-                text:
-                    "Connect to '${sharedPrefsModel.bluetoothName}' by clicking on the ",
-                children: [
-                  WidgetSpan(
-                    child: Icon(Icons.bluetooth),
-                  ),
-                  TextSpan(text: " button"),
-                ],
-              ),
-            )
-          : Text("Select your bluetooth device in the Settings screen"),
-    );
-  }
+    return Consumer<BluetoothModel>(
+      builder: (context, model, _) {
+        if (model.sensorInformation.isEmpty) {
+          return ListTile(
+            title: sharedPrefsModel.bluetoothName != ""
+                ? Text.rich(
+                    TextSpan(
+                      text:
+                          "Connect to '${sharedPrefsModel.bluetoothName}' by clicking on the ",
+                      children: [
+                        WidgetSpan(
+                          child: Icon(Icons.bluetooth),
+                        ),
+                        TextSpan(text: " button"),
+                      ],
+                    ),
+                  )
+                : Text("Select your bluetooth device in the Settings screen"),
+          );
+        }
 
-  Widget _onBluetoothConnected() {
-    BluetoothModel bluetoothModel =
-        Provider.of<BluetoothModel>(context, listen: false);
-    return StreamBuilder<String>(
-      stream: bluetoothModel.stream,
-      builder: (context, snapshot) {
-        bluetoothModel.addInformation(snapshot.data);
+        // If there is data
         return ListView.builder(
-          itemCount: bluetoothModel.sensorInformation.length,
+          itemCount: model.sensorInformation.length,
           itemBuilder: (context, index) {
-            var current = bluetoothModel.sensorInformation[index];
+            var current = model.sensorInformation[index];
             return BluetoothSensorSchemaCard(current);
           },
         );
