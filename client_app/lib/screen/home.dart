@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:client_app/bt/logic/utils.dart';
+import 'package:client_app/bt/screen/alert.dart';
+import 'package:client_app/bt/screen/debug.dart';
 import 'package:client_app/bt/screen/realtime.dart';
 import 'package:client_app/bt/state/bluetooth_model.dart';
 import 'package:client_app/cloud/screen/charts.dart';
@@ -17,22 +21,31 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _screens = [
     BluetoothRealtimeScreen(),
     CloudChartScreen(),
+    BluetoothAlertScreen(),
+    BluetoothDebugScreen(),
   ];
+
+  final List<Widget> _tabs = [
+    Tab(icon: Icon(Icons.bluetooth)),
+    Tab(icon: Icon(Icons.bar_chart)),
+    Tab(icon: Icon(Icons.add_alert_outlined)),
+    Tab(icon: Icon(Icons.receipt_long)),
+  ];
+
   int _index = 0;
+  StreamSubscription _subscription;
+  String _bluetoothData = "";
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: _screens.length,
       child: Scaffold(
         appBar: AppBar(
           title: Text("HomePage"),
           bottom: TabBar(
             onTap: (int index) => _updateScreenIndex(index),
-            tabs: [
-              Tab(icon: Icon(Icons.bluetooth)),
-              Tab(icon: Icon(Icons.bar_chart)),
-            ],
+            tabs: _tabs,
           ),
           actions: [
             Consumer<BluetoothModel>(
@@ -72,9 +85,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Close the previous connection
     if (bluetoothModel.connection?.isConnected == true) {
+      _bluetoothData = "";
+      _subscription?.cancel();
       await bluetoothModel.connection?.finish();
       bluetoothModel.connection = null;
-      bluetoothModel.stream = null;
+      setState(() {});
       return;
     }
 
@@ -106,7 +121,27 @@ class _HomeScreenState extends State<HomeScreen> {
         BluetoothUtils.inputStreamBluetoothConnection(connection);
 
     bluetoothModel.connection = connection;
-    bluetoothModel.stream = stream;
+
+    // - Subscribes to the stream
+    // - Appends characters received
+    // - Searches for \r\n and gets substring
+    // - Stores remainder back into _bluetoothData
+    _subscription = stream.listen((event) {
+      _bluetoothData += event.characters.string;
+
+      int index = 0;
+      while ((index = _bluetoothData.indexOf("\r\n")) >= 0) {
+        String data = _bluetoothData.substring(0, index);
+        _bluetoothData =
+            _bluetoothData.substring(index + 2, _bluetoothData.length);
+
+        // Use this data
+        Provider.of<BluetoothModel>(context, listen: false)
+            .addInformation(data);
+      }
+    });
+
+    setState(() {});
   }
 
   void onPressedSettings(BuildContext context) {
