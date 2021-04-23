@@ -52,10 +52,10 @@ class _BluetoothRealtimeScreenState extends State<BluetoothRealtimeScreen> {
       builder: (context, snapshot) {
         bluetoothModel.addInformation(snapshot.data);
         return ListView.builder(
-          itemCount: bluetoothModel.informations.length,
+          itemCount: bluetoothModel.sensorInformation.length,
           itemBuilder: (context, index) {
-            return BluetoothInformationSchemaCard(
-                bluetoothModel.informations[index].trim().split(","));
+            var current = bluetoothModel.sensorInformation[index];
+            return BluetoothSensorSchemaCard(current);
           },
         );
       },
@@ -63,13 +63,9 @@ class _BluetoothRealtimeScreenState extends State<BluetoothRealtimeScreen> {
   }
 }
 
-// * NOTE, Make sure this InformationSchema represents what is being sent from the microcontroller
-// See https://github.com/Connected-Healthcare/b_l475e_iot01a_sensors/blob/main/HelloWorld_ST_Sensors/main.cpp
-// Line 146 on Date 13 March 2021
-// https://github.com/Connected-Healthcare/b_l475e_iot01a_sensors/pull/1
-class BluetoothInformationSchemaCard extends StatelessWidget {
-  final List<String> tokens;
-  BluetoothInformationSchemaCard(this.tokens);
+class BluetoothSensorSchemaCard extends StatelessWidget {
+  final BluetoothSensorSchema sensorSchema;
+  BluetoothSensorSchemaCard(this.sensorSchema);
 
   @override
   Widget build(BuildContext context) {
@@ -80,8 +76,8 @@ class BluetoothInformationSchemaCard extends StatelessWidget {
           _createListTile(
             "HTS221",
             [
-              "Humidity: ${tokens[1]}",
-              "Temperature: ${tokens[0]} C",
+              "Humidity: ${sensorSchema.hts221Humidity}",
+              "Temperature: ${sensorSchema.hts221Temperature} C",
             ],
           ),
 
@@ -89,8 +85,8 @@ class BluetoothInformationSchemaCard extends StatelessWidget {
           _createListTile(
             "LPS22HB",
             [
-              "Pressure: ${tokens[3]} mbar",
-              "Temperature: ${tokens[2]} C",
+              "Pressure: ${sensorSchema.lps22hbPressure} mbar",
+              "Temperature: ${sensorSchema.lps22hbTemperature} C",
             ],
           ),
 
@@ -98,7 +94,7 @@ class BluetoothInformationSchemaCard extends StatelessWidget {
           _createListTile(
             "LIS3MDL Magnetometer (mag/mgauss)",
             [
-              "X: ${tokens[4]} Y: ${tokens[5]} Z: ${tokens[6]}",
+              "X: ${sensorSchema.magnetometer[0]} Y: ${sensorSchema.magnetometer[1]} Z: ${sensorSchema.magnetometer[2]}",
             ],
           ),
 
@@ -106,7 +102,7 @@ class BluetoothInformationSchemaCard extends StatelessWidget {
           _createListTile(
             "LSM6DSL Accelerometer (acc/mg)",
             [
-              "X: ${tokens[7]} Y: ${tokens[8]} Z: ${tokens[9]}",
+              "X: ${sensorSchema.accelerometer[0]} Y: ${sensorSchema.accelerometer[1]} Z: ${sensorSchema.accelerometer[2]}",
             ],
           ),
 
@@ -114,7 +110,7 @@ class BluetoothInformationSchemaCard extends StatelessWidget {
           _createListTile(
             "LSM6DSL Gyroscope (gyro/mdps)",
             [
-              "X: ${tokens[10]} Y: ${tokens[11]} Z: ${tokens[12]}",
+              "X: ${sensorSchema.gyroscope[0]} Y: ${sensorSchema.gyroscope[1]} Z: ${sensorSchema.gyroscope[2]}",
             ],
           ),
 
@@ -122,9 +118,13 @@ class BluetoothInformationSchemaCard extends StatelessWidget {
           _createListTile(
             "VL53L0X Time of Flight",
             [
-              "Distance: ${tokens[13]} mm",
+              "Distance: ${sensorSchema.timeOfFlight} mm",
             ],
           ),
+
+          // TODO, Add more informations here
+
+          // END
         ],
       ),
     );
