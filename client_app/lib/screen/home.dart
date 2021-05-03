@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 
 import 'package:client_app/bt/logic/utils.dart';
 import 'package:client_app/bt/screen/alert.dart';
 import 'package:client_app/bt/screen/debug.dart';
+import 'package:client_app/bt/screen/generic.dart';
 import 'package:client_app/bt/screen/realtime.dart';
 import 'package:client_app/bt/state/bluetooth_model.dart';
 import 'package:client_app/cloud/screen/charts.dart';
@@ -23,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     CloudChartScreen(),
     BluetoothAlertScreen(),
     BluetoothDebugScreen(),
+    BluetoothGenericScreen()
   ];
 
   final List<Widget> _tabs = [
@@ -30,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Tab(icon: Icon(Icons.bar_chart)),
     Tab(icon: Icon(Icons.add_alert_outlined)),
     Tab(icon: Icon(Icons.receipt_long)),
+    Tab(icon: Icon(Icons.radio)),
   ];
 
   int _index = 0;
@@ -128,12 +133,13 @@ class _HomeScreenState extends State<HomeScreen> {
     // - Stores remainder back into _bluetoothData
     _subscription = stream.listen((event) {
       _bluetoothData += event.characters.string;
+      log("btdata: $_bluetoothData", name: "BT");
 
       int index = 0;
-      while ((index = _bluetoothData.indexOf("\r\n")) >= 0) {
+      while ((index = _bluetoothData.indexOf("\n")) >= 0) {
         String data = _bluetoothData.substring(0, index);
         _bluetoothData =
-            _bluetoothData.substring(index + 2, _bluetoothData.length);
+            _bluetoothData.substring(index + 1, _bluetoothData.length);
 
         // Use this data
         Provider.of<BluetoothModel>(context, listen: false)

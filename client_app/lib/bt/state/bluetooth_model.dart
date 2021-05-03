@@ -64,6 +64,7 @@ class BluetoothModel extends ChangeNotifier {
 
   List<String> alerts = List<String>.empty(growable: true);
   List<String> debug = List<String>.empty(growable: true);
+  List<String> generic = List<String>.empty(growable: true);
 
   void addInformation(String line) {
     // Make sure no null value is received
@@ -95,7 +96,13 @@ class BluetoothModel extends ChangeNotifier {
       }
       debug.insert(0, tokens[1]);
     } else {
-      // Move on
+      if (line.trim().isEmpty) {
+      } else {
+        if (generic.length > MAXSIZE * 5) {
+          generic.removeLast();
+        }
+        generic.insert(0, line.trim());
+      }
     }
 
     notifyListeners();
