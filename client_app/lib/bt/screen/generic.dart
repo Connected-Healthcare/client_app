@@ -13,6 +13,17 @@ class BluetoothGenericScreen extends StatelessWidget {
         Provider.of<BluetoothModel>(context, listen: true);
     return Column(
       children: [
+        // Button
+        Wrap(
+          children: [
+            ElevatedButton(onPressed: () {}, child: Text("B1")),
+            ElevatedButton(onPressed: () {}, child: Text("B2")),
+            ElevatedButton(onPressed: () {}, child: Text("B3")),
+            ElevatedButton(onPressed: () {}, child: Text("B4")),
+            ElevatedButton(onPressed: () {}, child: Text("B5")),
+          ],
+        ),
+        // Text Editing
         Row(
           children: [
             Flexible(
@@ -57,7 +68,7 @@ class BluetoothGenericScreen extends StatelessWidget {
     }
 
     print("Sending: $text");
-    var command = utf8.encode("$text\r\n");
+    var command = utf8.encode("$text\r\n\r\n");
     bluetoothModel.connection.output.add(command);
   }
 }
