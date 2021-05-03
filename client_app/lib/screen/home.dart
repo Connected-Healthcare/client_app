@@ -133,11 +133,13 @@ class _HomeScreenState extends State<HomeScreen> {
     // - Stores remainder back into _bluetoothData
     _subscription = stream.listen((event) {
       _bluetoothData += event.characters.string;
-      log("btdata: $_bluetoothData", name: "BT");
 
       int index = 0;
-      while ((index = _bluetoothData.indexOf("\n")) >= 0) {
+      while (((index = _bluetoothData.indexOf("\n")) >= 0) ||
+          ((index = _bluetoothData.indexOf(">")) >= 0)) {
         String data = _bluetoothData.substring(0, index);
+        // log("d: $data -> ${utf8.encode(data)}");
+
         _bluetoothData =
             _bluetoothData.substring(index + 1, _bluetoothData.length);
 
