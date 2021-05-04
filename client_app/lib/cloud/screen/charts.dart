@@ -103,6 +103,8 @@ class _CloudChartScreenState extends State<CloudChartScreen> {
 }
 
 class AlertDoctorTile extends StatelessWidget {
+  static const AlertTopic = "alerts";
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -126,7 +128,7 @@ class AlertDoctorTile extends StatelessWidget {
 
     DatabaseReference alertRef = FirebaseDatabase.instance
         .reference()
-        .child("alerts")
+        .child(AlertTopic)
         .child("${sharedPrefsModel.userIdentifier}");
 
     await alertRef.set(DateTime.now().millisecondsSinceEpoch);
