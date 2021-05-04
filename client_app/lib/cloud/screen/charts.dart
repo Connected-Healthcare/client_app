@@ -31,6 +31,9 @@ class _CloudChartScreenState extends State<CloudChartScreen> {
         // Tell the user who he is
         UserSelectedTile(),
 
+        // Alert your doctor
+        AlertDoctorTile(),
+
         ListTile(
           leading: Icon(Icons.local_hospital),
           title: Text("Heartbeat Graph"),
@@ -96,5 +99,36 @@ class _CloudChartScreenState extends State<CloudChartScreen> {
   void dispose() {
     _stream?.cancel();
     super.dispose();
+  }
+}
+
+class AlertDoctorTile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: Icon(
+          Icons.add_alert_rounded,
+          color: Colors.red,
+        ),
+        title: Text("Alert your doctor"),
+        onTap: () => _onAlertDoctor(context),
+      ),
+    );
+  }
+
+  void _onAlertDoctor(BuildContext context) async {
+    final SharedPrefsModel sharedPrefsModel =
+        Provider.of<SharedPrefsModel>(context, listen: false);
+    if (sharedPrefsModel.userIdentifier == "") {
+      return;
+    }
+
+    DatabaseReference alertRef = FirebaseDatabase.instance
+        .reference()
+        .child("alerts")
+        .child("${sharedPrefsModel.userIdentifier}");
+
+    await alertRef.set(DateTime.now().millisecondsSinceEpoch);
   }
 }
